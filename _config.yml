@@ -11,7 +11,7 @@ tagline:             'dev blog'
 description:         'cnabro91@gmail.com'
 url:                 http://cnabro.github.io
 baseurl:             ''
-paginate:            5
+paginate:            1
 
 # About/contact
 author:
