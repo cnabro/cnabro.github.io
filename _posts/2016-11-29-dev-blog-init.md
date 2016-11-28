@@ -1,3 +1,10 @@
+---
+layout: post
+comments : true
+title: Dev blog init
+---
+
+
 ## 개발 블로그 시작 
 
 - 한번 마크업을 테스트 해보자
