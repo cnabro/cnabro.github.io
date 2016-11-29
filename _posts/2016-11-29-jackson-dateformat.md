@@ -1,7 +1,7 @@
 ---
 layout: post
 comments : true
-tags : spring, java
+tags : spring java json jackson
 title: Jackson Object Mapper를 이용한 Date String 파싱 방법
 ---
 
