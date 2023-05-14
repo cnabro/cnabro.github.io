@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>네이버웹툰 6주년</title>
+  <script
+  src="https://code.jquery.com/jquery-3.7.0.min.js"
+  integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <h1 class="cake">🎂</h1>
+  <div class='title'>네이버웹툰</br>6주년을 축하합니다 🎉</br></br>그동안 함께했던 서비스에</br>많은 박수를 부탁드립니다 👏</div>
+  <div class='subtitle'></div>
+  <div class="typing"><h1 class="text"></h1></div>
+  
+</body>
+<style>
+    .cake {
+        height: 55px;
+        display: flex;
+        position: absolute;
+        margin-top: -500px;
+        justify-content: center;
+        font-size: 9rem;
+    }
+
+    .title {
+        height: 55px;
+        display: flex;
+        position: absolute;
+        margin-top: -100px;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: 200;
+    }
+
+    .subtitle {
+        height: 55px;
+        display: flex;
+        position: absolute;
+        margin-top: 0px;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .typing {
+        height: 55px;
+        display: flex;
+        position: absolute;
+        margin-top: 400px;
+        justify-content: center;
+        /* align-items: flex-end; */
+        font-size: 1.8rem;
+    }
+
+    .text {
+        font-size: 3rem;
+        margin-left: .6rem;
+    }
+
+    .text::after {
+        content: '';
+        margin-left: .4rem;
+        border-right: 2px solid #777;
+        animation: cursor .9s infinite steps(2);
+    }
+
+    @keyframes cursor {
+        from { border-right: 2px solid #222; }
+        to { border-right: 2px solid #777; }
+    }
+
+    /* ---------------------------------------- */
+    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
+    * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        box-sizing: border-box;  
+        font-family: Pretendard;
+    }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #222;
+        color: white;
+    }
+</style>
+<!--https://gurtn.tistory.com/168, https://kmkblog.tistory.com/292-->
+<script>
+    const $text = document.querySelector(".text");
+
+    const letters = [
+    "SERIESON",
+    "SERIES", 
+    "YONDER",
+    "LINE MANGA",
+    "WATTPAD",
+    "XOY",
+    "LINE WEBTOON",
+    "WEBTOON",
+    "MUNPIA"
+    ];
+
+    const speed = 100;
+    let i = 0;
+
+    const typing = async () => {  
+    const letter = letters[i].split("");
+    
+    while (letter.length) {
+        await wait(speed);
+        const c = letter.shift()
+        $text.innerHTML += c; 
+    }
+    
+    await wait(800);
+
+    remove();
+    }
+
+    const remove = async () => {
+    const letter = letters[i].split("");
+    
+    while (letter.length) {
+        await wait(speed);
+        
+        letter.pop();
+        $text.innerHTML = letter.join(""); 
+    }
+    
+    i = !letters[i+1] ? 0 : i + 1;
+    typing();
+    }
+
+    function wait(ms) {
+    return new Promise(res => setTimeout(res, ms))
+    }
+
+    setTimeout(typing, 1500);
+
+    (function () {
+        // globals
+        var canvas;
+        var ctx;
+        var W;
+        var H;
+        var mp = 150; //max particles
+        var particles = [];
+        var angle = 0;
+        var tiltAngle = 0;
+        var confettiActive = true;
+        var animationComplete = true;
+        var deactivationTimerHandler;
+        var reactivationTimerHandler;
+        var animationHandler;
+
+        // objects
+
+        var particleColors = {
+            colorOptions: ["DodgerBlue", "OliveDrab", "Gold", "pink", "SlateBlue", "lightblue", "Violet", "PaleGreen", "SteelBlue", "SandyBrown", "Chocolate", "Crimson"],
+            colorIndex: 0,
+            colorIncrementer: 0,
+            colorThreshold: 10,
+            getColor: function () {
+                if (this.colorIncrementer >= 10) {
+                    this.colorIncrementer = 0;
+                    this.colorIndex++;
+                    if (this.colorIndex >= this.colorOptions.length) {
+                        this.colorIndex = 0;
+                    }
+                }
+                this.colorIncrementer++;
+                return this.colorOptions[this.colorIndex];
+            }
+        }
+
+        function confettiParticle(color) {
+            this.x = Math.random() * W; // x-coordinate
+            this.y = (Math.random() * H) - H; //y-coordinate
+            this.r = RandomFromTo(10, 15); //radius;
+            this.d = (Math.random() * mp) + 10; //density;
+            this.color = color;
+            this.tilt = Math.floor(Math.random() * 10) - 10;
+            this.tiltAngleIncremental = (Math.random() * 0.07) + .05;
+            this.tiltAngle = 0;
+
+            this.draw = function () {
+                ctx.beginPath();
+                ctx.lineWidth = this.r / 2;
+                ctx.strokeStyle = this.color;
+                ctx.moveTo(this.x + this.tilt + (this.r / 4), this.y);
+                ctx.lineTo(this.x + this.tilt, this.y + this.tilt + (this.r / 4));
+                return ctx.stroke();
+            }
+        }
+
+        $(document).ready(function () {
+            SetGlobals();
+            //InitializeButton();
+            InitializeConfetti();
+
+            $(window).resize(function () {
+                W = window.innerWidth;
+                H = window.innerHeight;
+                canvas.width = W;
+                canvas.height = H;
+            });
+
+        });
+
+        function InitializeButton() {
+            $('#stopButton').click(DeactivateConfetti);
+            $('#startButton').click(RestartConfetti);
+        }
+
+        function SetGlobals() {
+            canvas = document.getElementById("canvas");
+            ctx = canvas.getContext("2d");
+            W = window.innerWidth;
+            H = window.innerHeight;
+            canvas.width = W;
+            canvas.height = H;
+        }
+
+        function InitializeConfetti() {
+            particles = [];
+            animationComplete = false;
+            for (var i = 0; i < mp; i++) {
+                var particleColor = particleColors.getColor();
+                particles.push(new confettiParticle(particleColor));
+            }
+            StartConfetti();
+        }
+
+        function Draw() {
+            ctx.clearRect(0, 0, W, H);
+            var results = [];
+            for (var i = 0; i < mp; i++) {
+                (function (j) {
+                    results.push(particles[j].draw());
+                })(i);
+            }
+            Update();
+
+            return results;
+        }
+
+        function RandomFromTo(from, to) {
+            return Math.floor(Math.random() * (to - from + 1) + from);
+        }
+
+
+        function Update() {
+            var remainingFlakes = 0;
+            var particle;
+            angle += 0.01;
+            tiltAngle += 0.1;
+
+            for (var i = 0; i < mp; i++) {
+                particle = particles[i];
+                if (animationComplete) return;
+
+                if (!confettiActive && particle.y < -15) {
+                    particle.y = H + 100;
+                    continue;
+                }
+
+                stepParticle(particle, i);
+
+                if (particle.y <= H) {
+                    remainingFlakes++;
+                }
+                CheckForReposition(particle, i);
+            }
+
+            if (remainingFlakes === 0) {
+                StopConfetti();
+            }
+        }
+
+        function CheckForReposition(particle, index) {
+            if ((particle.x > W + 20 || particle.x < -20 || particle.y > H) && confettiActive) {
+                if (index % 5 > 0 || index % 2 == 0) //66.67% of the flakes
+                {
+                    repositionParticle(particle, Math.random() * W, -10, Math.floor(Math.random() * 10) - 20);
+                } else {
+                    if (Math.sin(angle) > 0) {
+                        //Enter from the left
+                        repositionParticle(particle, -20, Math.random() * H, Math.floor(Math.random() * 10) - 20);
+                    } else {
+                        //Enter from the right
+                        repositionParticle(particle, W + 20, Math.random() * H, Math.floor(Math.random() * 10) - 20);
+                    }
+                }
+            }
+        }
+        function stepParticle(particle, particleIndex) {
+            particle.tiltAngle += particle.tiltAngleIncremental;
+            particle.y += (Math.cos(angle + particle.d) + 3 + particle.r / 2) / 3;
+            particle.x += Math.sin(angle);
+            particle.tilt = (Math.sin(particle.tiltAngle - (particleIndex / 3))) * 15;
+        }
+
+        function repositionParticle(particle, xCoordinate, yCoordinate, tilt) {
+            particle.x = xCoordinate;
+            particle.y = yCoordinate;
+            particle.tilt = tilt;
+        }
+
+        function StartConfetti() {
+            W = window.innerWidth;
+            H = window.innerHeight;
+            canvas.width = W;
+            canvas.height = H;
+            (function animloop() {
+                if (animationComplete) return null;
+                animationHandler = requestAnimFrame(animloop);
+                return Draw();
+            })();
+        }
+
+        function ClearTimers() {
+            clearTimeout(reactivationTimerHandler);
+            clearTimeout(animationHandler);
+        }
+
+        function DeactivateConfetti() {
+            confettiActive = false;
+            ClearTimers();
+        }
+
+        function StopConfetti() {
+            animationComplete = true;
+            if (ctx == undefined) return;
+            ctx.clearRect(0, 0, W, H);
+        }
+
+        function RestartConfetti() {
+            ClearTimers();
+            StopConfetti();
+            reactivationTimerHandler = setTimeout(function () {
+                confettiActive = true;
+                animationComplete = false;
+                InitializeConfetti();
+            }, 100);
+
+        }
+
+        window.requestAnimFrame = (function () {
+            return window.requestAnimationFrame || 
+            window.webkitRequestAnimationFrame || 
+            window.mozRequestAnimationFrame || 
+            window.oRequestAnimationFrame || 
+            window.msRequestAnimationFrame || 
+            function (callback) {
+                return window.setTimeout(callback, 1000 / 60);
+            };
+        })();
+    })();
+</script>
+</html>
